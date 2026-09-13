@@ -75,7 +75,6 @@ class Tree<T> {
   } 
 
   public insert(value: T) {
-    
     const newNode: TBinaryNode<T> = {
       value,
       left: null,
