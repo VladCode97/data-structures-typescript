@@ -55,7 +55,7 @@ The objective is not only to know how a data structure works, but to understand 
 
 - [x] Trie
 - [x] Binary Tree
-- [ ] Binary Search Tree
+- [x] Binary Search Tree
 - [ ] AVL Tree
 - [ ] Red-Black Tree
 - [ ] Heap

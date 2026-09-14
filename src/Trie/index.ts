@@ -14,18 +14,15 @@ class Trie {
     }
   }
 
-  public insert(input: string): void {
+   public insert(input: string): void {
     input = input.toLowerCase().split('')
     let currentNode = this.root
-    for(let i: number = 0; i < input.length ;i++) {
-      let existNode = currentNode.children.get(input[i])
+    for(let i: number = 0; i < input.length; i++) {
+      const existNode = currentNode.children.get(input[i])
       if(existNode) {
         currentNode = existNode
       } else {
-        const node: TTrieNode = {
-          children: new Map(),
-          isWord: false
-        }
+        const node: TTrieNode = { children: new Map(), isWord: false }
         currentNode.children.set(input[i], node)
         currentNode = node
       }
@@ -159,7 +156,7 @@ trie.insert('cat')
 trie.insert('can')
 trie.insert('dog')
 trie.insert('door')
-trie.insert('cart')
+trie.append('cart')
 trie.print()
 console.log(trie.search('door'))
 console.log(trie.startsWith('l'))

@@ -1,7 +1,7 @@
 /**
- * 
+ *
  * Type reference
- */ 
+ */
 type TBinaryNode<T> = {
   value: T,
   left: TBinaryNode<T> | null,
@@ -10,12 +10,12 @@ type TBinaryNode<T> = {
 
 
 /**
- * 
- * Tree 
- * 
- */ 
+ *
+ * Tree
+ *
+ */
 class BalanceBinaryTree<T> {
-  
+
   private root: TBinaryNode<T> | null
 
   public constructor() {
@@ -38,7 +38,7 @@ class BalanceBinaryTree<T> {
   public insert(currentNode: TBinaryNode<T> | null, value: T): TBinaryNode<T> | null {
     if(currentNode === null) {
       currentNode = {
-        value, 
+        value,
         left: null,
         right: null
       }
@@ -55,17 +55,17 @@ class BalanceBinaryTree<T> {
       return currentNode
     }
   }
-  
+
   public print(): void {
      console.log(JSON.stringify(this.root, null, 2))
   }
 
   public search(value): boolean {
-    if (this.root === null) return false 
+    if (this.root === null) return false
     if(this.root.value === value) { return true }
     const currentNode = this.root
     const searchNode = this.searchValue(currentNode, value)
-    return searchNode !== null 
+    return searchNode !== null
   }
 
   private searchValue(currentNode: TBinaryNode<T> | null, value: T): TBinaryNode<T> | null {
