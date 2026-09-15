@@ -86,6 +86,12 @@ class AVL<T> {
     return isFounded !== null
   }
 
+  public rangeQuery(min: T, max: T): T[] {
+    const result: T[] = []
+    this.rangeSearchElement(this.root, min, max, result);
+    return result
+  }
+
   private searchElement(node: TBinaryNode<T> | null, value: T): TBinaryNode<T> | null {
     if (node === null) { return null }
     if (node.value === value) return node
@@ -97,6 +103,19 @@ class AVL<T> {
         return this.searchElement(node.right, value)
       }
       return null
+    }
+  }
+
+  private rangeSearchElement(node: TBinaryNode<T> | null, min: T, max: T, result: T[]): void {
+    if (node === null) return
+    if (node.value < min) {
+      this.rangeSearchElement(node.right, min, max, result)
+    } else if (node.value > max) {
+      this.rangeSearchElement(node.left, min, max, result)
+    } else {
+      this.rangeSearchElement(node.left, min, max, result)
+      result.push(node.value)
+      this.rangeSearchElement(node.right, min, max, result)
     }
   }
 
@@ -178,40 +197,26 @@ class AVL<T> {
 }
 
 
-const avl: AVL<number> = new AVL<number>()
+const avl = new AVL<number>()
 
-avl.append(50)
-avl.append(20)
-avl.append(80)
-avl.append(10)
-avl.append(30)
-avl.append(60)
-avl.append(90)
-avl.append(5)
-avl.append(15)
-avl.append(25)
-avl.append(35)
-avl.append(55)
-avl.append(70)
-avl.append(85)
-avl.append(95)
-avl.append(1)
-avl.append(7)
-avl.append(12)
-avl.append(18)
-avl.append(22)
-avl.append(28)
-avl.append(33)
-avl.append(40)
-avl.append(52)
-avl.append(58)
-avl.append(65)
-avl.append(75)
-avl.append(82)
-avl.append(88)
-avl.append(100)
+const startInsert = performance.now()
 
-avl.print()
-console.log(avl.search(65))
-console.log(avl.search(999))
-console.log(avl.height())
+for (let i = 0; i < 50_000_000; i++) {
+  avl.append(i)
+}
+
+console.log(`Insert: ${performance.now() - startInsert} ms`)
+console.log(`Height: ${avl.height()}`)
+
+const startSearch = performance.now()
+
+console.log(avl.search(9_999_999))
+
+console.log(`Search: ${performance.now() - startSearch} ms`)
+
+const startRange = performance.now()
+
+const result = avl.rangeQuery(5_000_000, 5_000_100)
+
+console.log(`Range query: ${performance.now() - startRange} ms`)
+console.log(result.length)
