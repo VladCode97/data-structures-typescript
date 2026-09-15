@@ -5,6 +5,9 @@ type TBinaryNode<T> = {
   heigth: number
 }
 
+type TDirectionImbalanceNode = 'LEFT' | 'RIGHT' | 'BALANCED'
+type TDirectonNode = 'LL' | 'LR' | 'RR' | 'RL'
+
 class AVL<T> {
 
   private root: TBinaryNode<T> | null
@@ -23,8 +26,7 @@ class AVL<T> {
       }
       return
     }
-    const currentNode = this.root
-    this.insert(currentNode, value)
+    this.root = this.insert(this.root, value)
   }
 
   private insert(node: TBinaryNode<T> | null, value: T): TBinaryNode<T> | null {
@@ -42,7 +44,25 @@ class AVL<T> {
       node.right = this.insert(node.right, value)
     }
     this.updateHeight(node)
-    this.getBalanceFactor(node)
+    const balanceFator = this.getBalanceFactor(node)
+    const direction = this.buildBalanceFactor(balanceFator)
+    if (direction === 'LEFT') {
+      const type = this.calculateBalanceFator(node, node.left)
+      if (type === 'LL') {
+        return this.rotateRight(node)
+      } else if (type === 'LR') {
+        node.left = this.rotateLeft(node.left)
+        return this.rotateRight(node)
+      }
+    } else if (direction === 'RIGHT') {
+      const type = this.calculateBalanceFator(node, node.right)
+      if (type === 'RR') {
+        return this.rotateLeft(node)
+      } else if (type === 'RL') {
+        node.right = this.rotateRight(node.right)
+        return this.rotateLeft(node)
+      }
+    }
     return node
   }
 
@@ -97,41 +117,101 @@ class AVL<T> {
     return Math.max(nodeLeftValue, nodeRightValue)
   }
 
-  private getBalanceFactor(node: TBinaryNode<T> | null) {
-    if (node === null) { return '' }
-    const result = this.getStoredHeight(node.left) - this.getStoredHeight(node.right)
-    switch (result) {
-      case 0: {
-        console.log(`The node ${node.value} is perfectly balanced`)
-        break
-      }
-      case 1: {
-        console.log(`The node ${node.value}:: The left subtree is 1 level taller than the right subtree`)
-        break
-      }
-      case -1: {
-        console.log(`The node ${node.value}:: The right subtree is 1 level taller than the left subtree`)
-        break
-      }
-      case 2: {
-        console.log(`The node ${node.value}:: The left subtree is 2 levels taller than the right subtree — unbalanced`)
-        break
-      }
-      case -2: {
-        console.log(`The node ${node.value}:: The right subtree is 2 levels taller than the left subtree — unbalanced`)
-        break
-      }
+  private getBalanceFactor(node: TBinaryNode<T> | null): number {
+    if (node === null) { return 0 }
+    return this.getStoredHeight(node.left) - this.getStoredHeight(node.right)
+  }
+
+  private getDirectionNode(bfValue: number): TDirectionImbalanceNode {
+    const direction = Math.sign(bfValue)
+    if (direction === 1) {
+      return 'LEFT'
     }
+    if (direction === -1) {
+      return 'RIGHT'
+    }
+    return 'BALANCED'
+  }
+
+
+  private buildBalanceFactor(bfValue: number): TDirectionImbalanceNode {
+    if ((bfValue) > 1) {
+      return 'LEFT'
+    } else if ((bfValue) < -1) {
+      return 'RIGHT'
+    } else {
+      return 'BALANCED'
+    }
+  }
+
+
+  private calculateBalanceFator(node: TBinaryNode<T> | null, childNode: TBinaryNode<T> | null): TDirectonNode {
+    const nodeDirection = this.getDirectionNode(this.getBalanceFactor(node))[0]
+    const childNodeDirection = this.getDirectionNode(this.getBalanceFactor(childNode))[0]
+    return nodeDirection + childNodeDirection as TDirectonNode
+  }
+
+  private rotateRight(node: TBinaryNode<T> | null): TBinaryNode<T> | null {
+    if (node === null) return null
+    let child = node.left
+    if (child === null) return null
+    let subtree = child.right
+    child.right = node
+    node.left = subtree
+    this.updateHeight(node)
+    this.updateHeight(child)
+    return child
+  }
+
+  private rotateLeft(node: TBinaryNode<T> | null): TBinaryNode<T> | null {
+    if (node === null) return null
+    let child = node.right
+    if (child === null) return null
+    let subtree = child.left
+    child.left = node
+    node.right = subtree
+    this.updateHeight(node)
+    this.updateHeight(child)
+    return child
   }
 
 }
 
+
 const avl: AVL<number> = new AVL<number>()
+
+avl.append(50)
+avl.append(20)
+avl.append(80)
+avl.append(10)
+avl.append(30)
+avl.append(60)
+avl.append(90)
+avl.append(5)
+avl.append(15)
+avl.append(25)
+avl.append(35)
+avl.append(55)
+avl.append(70)
+avl.append(85)
+avl.append(95)
 avl.append(1)
-avl.append(-2)
-avl.append(3)
-avl.append(-3)
-avl.append(-1)
+avl.append(7)
+avl.append(12)
+avl.append(18)
+avl.append(22)
+avl.append(28)
+avl.append(33)
+avl.append(40)
+avl.append(52)
+avl.append(58)
+avl.append(65)
+avl.append(75)
+avl.append(82)
+avl.append(88)
+avl.append(100)
+
 avl.print()
-console.log(avl.search(-3))
+console.log(avl.search(65))
+console.log(avl.search(999))
 console.log(avl.height())
